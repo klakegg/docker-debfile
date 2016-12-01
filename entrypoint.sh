@@ -1,9 +1,11 @@
 #!/bin/sh
 
-if [ ! $2 ]; then
-	echo "Please specify parameters: section package"
+if [ ! $1 ]; then
+	echo "Please specify parameter: package"
 	exit
 fi
+
+package=$1
 
 # Copy debian folder if found.
 if [ -e /src/debian ]; then
@@ -17,22 +19,23 @@ mkdir -p DEBIAN
 if [ ! $TIMESTAMP = "-" ]; then timestamp=$TIMESTAMP; else timestamp=$(date +%s); fi
 if [ ! $VERSION = "-" ]; then version=$VERSION; else version=$timestamp; fi
 if [ ! $TAG = "-" ]; then tag="-$TAG"; fi
+ver=$timestamp:$version$tag
 
 # Create metadata file.
-echo "Package: $2" > DEBIAN/control
-echo "Version: $timestamp:$version$tag" >> DEBIAN/control
-echo "Section: $1" >> DEBIAN/control
+echo "Package: $package" > DEBIAN/control
+echo "Version: $ver" >> DEBIAN/control
+echo "Section: $SECTION" >> DEBIAN/control
 echo "Priority: $PRIORITY" >> DEBIAN/control
 echo "Architecture: $ARCHITECTURE" >> DEBIAN/control
 echo "Essential: $ESSENTIAL" >> DEBIAN/control
 echo "Maintainer: $MAINTAINER" >> DEBIAN/control
-echo "Description: $2" >> DEBIAN/control
+echo "Description: $1" >> DEBIAN/control
 
 # Run debfile script
 if [ -e $DEBFILE ]; then
 	sh $DEBFILE
-elif [ -e /package/$2 ]; then
-	sh /package/$2
+elif [ -e /package/$package ]; then
+	sh /package/$package
 fi
 
 # Make postinst file executable if found.
@@ -41,5 +44,5 @@ if [ -f DEBIAN/postinst ]; then
 fi
 
 # Create package and write debfile-current
-dpkg-deb --build /debian /target/$2-$timestamp:$version$tag-$ARCHITECTURE.deb
-echo -n "$2-$timestamp:$version$tag-$ARCHITECTURE.deb" > /target/debfile-current
+dpkg-deb --build /debian /target/$package-$ver-$ARCHITECTURE.deb
+echo -n "$package-$ver-$ARCHITECTURE.deb" > /target/debfile-current
