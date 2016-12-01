@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 MAINTAINER Erlend Klakegg Bergheim
 
-ADD entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh install.sh /
+RUN ["/install.sh"]
 
 ENV ARCHITECTURE all
 ENV DEBFILE /src/Debfile
