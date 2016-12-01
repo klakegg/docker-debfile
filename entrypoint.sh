@@ -5,35 +5,40 @@ if [ ! $2 ]; then
 	exit
 fi
 
+# Copy debian folder if found.
+if [ -e /src/debian ]; then
+	cp -a /src/debian/. /debian
+fi
+
 # Create configuration folder.
-mkdir -p debian/DEBIAN
+mkdir -p DEBIAN
 
 # Specify version
 timestamp=$(date +%s)
-version=$timestamp
+if [ ! $VERSION = "-" ]; then version=$VERSION; else version=$timestamp; fi
+if [ ! $TAG = "-" ]; then tag="-$TAG"; else tag=""; fi
 
 # Create metadata file.
-echo "Package: $2" > debian/DEBIAN/control
-echo "Version: $timestamp:$version" >> debian/DEBIAN/control
-echo "Section: $1" >> debian/DEBIAN/control
-echo "Priority: $PRIORITY" >> debian/DEBIAN/control
-echo "Architecture: $ARCHITECTURE" >> debian/DEBIAN/control
-echo "Essential: $ESSENTIAL" >> debian/DEBIAN/control
-echo "Maintainer: $MAINTAINER" >> debian/DEBIAN/control
-echo "Description: $2" >> debian/DEBIAN/control
+echo "Package: $2" > DEBIAN/control
+echo "Version: $timestamp:$version$tag" >> DEBIAN/control
+echo "Section: $1" >> DEBIAN/control
+echo "Priority: $PRIORITY" >> DEBIAN/control
+echo "Architecture: $ARCHITECTURE" >> DEBIAN/control
+echo "Essential: $ESSENTIAL" >> DEBIAN/control
+echo "Maintainer: $MAINTAINER" >> DEBIAN/control
+echo "Description: $2" >> DEBIAN/control
 
 # Run debfile script
-if [ -e Debfile ]; then
-	sh Debfile
+if [ -e /src/Debfile ]; then
+	sh /src/Debfile
 elif [ -e /debfile/package/$2 ]; then
 	sh /debfile/package/$2
 fi
 
 # Make postinst file executable if found.
-if [ -f debian/DEBIAN/postinst ]; then
-	chmod a+x debian/DEBIAN/postinst
+if [ -f DEBIAN/postinst ]; then
+	chmod a+x DEBIAN/postinst
 fi
 
 # Create package
-dpkg-deb --build debian /target/$2-$timestamp:$version.deb
-
+dpkg-deb --build /debian /target/$2-$timestamp:$version$tag.deb
