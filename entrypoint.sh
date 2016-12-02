@@ -44,5 +44,7 @@ if [ -f DEBIAN/postinst ]; then
 fi
 
 # Create package and write debfile-current
-dpkg-deb --build /debian /target/$package-$ver-$ARCHITECTURE.deb
-echo -n "$package-$ver-$ARCHITECTURE.deb" > /target/debfile-current
+mkdir -p $TARGET
+dpkg-deb --build /debian $TARGET/$package-$ver-$ARCHITECTURE.deb
+echo -n "$package-$ver-$ARCHITECTURE.deb" > $TARGET/debfile-current
+chown $OWNER $TARGET/$package-$ver-$ARCHITECTURE.deb $TARGET/debfile-current
