@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ ! $1 ]; then
 	echo "Please specify parameter: package"
 	exit
@@ -39,12 +41,19 @@ elif [ -e /package/$package ]; then
 fi
 
 # Make postinst file executable if found.
-if [ -f DEBIAN/postinst ]; then
-	chmod a+x DEBIAN/postinst
+for file in postinst preinst prerm postrm; do
+	if [ -f DEBIAN/$file ]; then
+		chmod 500 DEBIAN/$file
+	fi
+done
+
+# Create target folder if it doesn't exists.
+if [ ! -e $TARGET ]; then
+	mkdir -p $TARGET
+	chown $OWNER $TARGET
 fi
 
 # Create package and write debfile-current
-mkdir -p $TARGET
 dpkg-deb --build /debian $TARGET/$package-$ver-$ARCHITECTURE.deb
 echo -n "$package-$ver-$ARCHITECTURE.deb" > $TARGET/debfile-current
 chown $OWNER $TARGET/$package-$ver-$ARCHITECTURE.deb $TARGET/debfile-current

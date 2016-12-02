@@ -1,8 +1,9 @@
 FROM ubuntu:16.04
 MAINTAINER Erlend Klakegg Bergheim
 
-ADD entrypoint.sh install.sh /
-RUN ["/install.sh"]
+RUN apt-get update \
+ && apt-get install -y unzip zip curl wget \
+ && rm -r /var/lib/apt /var/lib/dpkg
 
 ENV ARCHITECTURE all
 ENV DEBFILE /src/Debfile
@@ -23,4 +24,6 @@ VOLUME /target
 
 WORKDIR /debian
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/script/entrypoint.sh"]
+
+ADD . /script
