@@ -55,5 +55,5 @@ fi
 
 # Create package and write debfile-current
 dpkg-deb --build /debian $TARGET/$package-$ver-$ARCHITECTURE.deb
-echo -n "$package-$ver-$ARCHITECTURE.deb" > $TARGET/debfile-current
-chown $OWNER $TARGET/$package-$ver-$ARCHITECTURE.deb $TARGET/debfile-current
+echo -n "$package-$ver-$ARCHITECTURE.deb" > $TARGET/$package-current-$ARCHITECTURE
+chown $OWNER $TARGET/$package-$ver-$ARCHITECTURE.deb $TARGET/$package-current-$ARCHITECTURE

@@ -5,25 +5,22 @@ RUN apt-get update \
  && apt-get install -y unzip zip curl wget \
  && rm -r /var/lib/apt /var/lib/dpkg
 
-ENV ARCHITECTURE all
-ENV DEBFILE /src/Debfile
-ENV ESSENTIAL no
-ENV MAINTAINER Unknown
-ENV OWNER 0:0
-ENV PRIORITY optional
-ENV SECTION main
-ENV TAG -
-ENV TARGET /target
-ENV TIMESTAMP -
-ENV VERSION -
+ENV ARCHITECTURE="all" \
+  DEBFILE="/src/Debfile" \
+  ESSENTIAL="no" \
+  MAINTAINER="Unknown" \
+  OWNER="0:0" \
+  PRIORITY="optional" \
+  SECTION="main" \
+  TAG="-" \
+  TARGET="/target" \
+  TIMESTAMP="-" \
+  VERSION="-"
 
-VOLUME /debian
-VOLUME /package
-VOLUME /src
-VOLUME /target
+VOLUME /debian /package /src /target
+
+ADD . /script
 
 WORKDIR /debian
 
 ENTRYPOINT ["/script/entrypoint.sh"]
-
-ADD . /script
